@@ -4,15 +4,14 @@
 import urllib
 import re
 
-
 _no = re.compile(r"""<div class="no">No. ([^<]+)</div>""");
 _name = re.compile(r"""<div class="name">([^<]+)</div>""")
 _icon = re.compile(r"""<img class="imgicon" src="([^"]+)" /></div>""")
 _cost = re.compile(r"""<div class="cost"><dl><dt>[^<]+</dt><dd>([^<]+)</dd>""")
 _exp = re.compile(r"""<div class="exp"><dl><dt>[^<]+</dt><dd style="width: 92px;"><span style="float:left;">([^<]+)</span> """);
 _status= re.compile(r"""<div class="block stateInfo">([^@]{3,5000}?)</div>""");
-_attr= re.compile(r"""fonticon_attr_([\d_]+).png""");
-_type=re.compile(r"""fonticon/fonticon_type_([\d_]+).png""");
+_attr= re.compile(r"""fonticon_attr_([\d]+)""");
+_type=re.compile(r"""fonticon/fonticon_type_([\d]+)""");
 _skill = re.compile(r"""<div class="block skillInfo">([^@]+)<div class="block awakenInfo">""");
 _awakeSkill = re.compile(r"""<div class="block awakenInfo">([^@]{3,5000}?)</div>""");
 
@@ -52,7 +51,7 @@ def get_charactor_exp(uni_c):
 	com = re.compile(_exp);
 	rst = com.findall(uni_c)
 	if len(rst) != 0:
-		return int(rst[0])
+		return int(rst[0].replace(",",""))
 	else:
 		raise Exception("ERROR")
 
@@ -61,21 +60,50 @@ def get_charactor_status(uni_c):
 	com = re.compile(_status);
 	rst = com.findall(uni_c)
 
+	com2 = re.compile(r"""th>Lv.1</th>\s+<th class="nobg">Lv.([^<]+)</th>\s+</tr>\s+<tr>\s+<td height="26">HP</td>\s+<td>([^<]+)</td>\s+<td class="nobg">([^<]+) <span class="green">[^<]+</span></td>\s+</tr>\s+<tr>\s+<td height="24">[^<]+</td>\s+<td>([^<]+)</td>\s+<td class="nobg">([^<]+) <span class="green">[^<]+</span></td>\s+</tr>\s+<tr>\s+<td height="23">[^<]+</td>\s+<td>([^<]+)</td>\s+<td class="nobg">([^<]+)""")
+
+
 	if len(rst) != 0:
 		#require get data from HTML Table
-		print rst[0]
+		r = com2.findall(rst[0]);
+		return int(r[0][0]), int(r[0][1]), int(r[0][2]), int(r[0][3]), int(r[0][4]), int(r[0][5]), int(r[0][6])
 		
 	else:
 		raise Exception("ERROR")
 
+def get_charactor_attr(uni_c):
+	com = re.compile(_attr);
+	rst = com.findall(uni_c)
+	if len(rst) != 0:
+		rr = []
+		for r in rst[0]:
+			rr.append(int(r))
+		return rr
+	else:
+		raise Exception("ERROR")
+
+def get_charactor_type(uni_c):
+	com = re.compile(_type);
+	rst = com.findall(uni_c)
+	if len(rst) != 0:
+		rr = []
+		for r in rst[0]:
+			rr.append(int(r))
+		return rr
+	else:
+		raise Exception("ERROR")
 
 class Monster(object):
 	_no = 0
 	_name = "None"
+	_cost = 0
+	_exp = 0
 	_maxLevel = 0
 	_attackPointList = []
 	_healPointList = []
 	_healthPointList = []
+	_mainAttribute = 0
+	_subAttribute = 0
 	_mainType = 0
 	_subType = 0
 	_skill = 0
@@ -85,27 +113,59 @@ class Monster(object):
 	_nextEvolution = 0
 	_imageUrl = ""
 
+	def __init__(self, _no=0,_name="None",_cost=0,_exp=0,_maxLevel = 0, _attackPointList = [], _healPointList = [],_healthPointList = [],_mainAttribute = 0,_subAttribute = 0,_mainType = 0,_subType = 0, _skill = 0,_LeaderSKill = 0,_AwakeSkill = 0,_prevEvolution = 0,	_nextEvolution = 0,	_imageUrl = ""):
+		self._no = _no;
+		self._name = _name
+		self._cost = _cost
+		self._exp = _exp
+		self._maxLevel = _maxLevel
+		self._attackPointList = _attackPointList
+		self._healPointList = _healPointList
+		self._healthPointList = _healthPointList
+		self._mainAttribute = _mainAttribute
+		self._subAttribute = _subAttribute
+		self._mainType = _mainType
+		self._subType = _subType
+		self._skill = _skill
+		self._LeaderSKill = _LeaderSKill
+		self._AwakeSkill = _AwakeSkill
+		self._prevEvolution = _prevEvolution
+		self._nextEvolution = _nextEvolution
+		self._imageUrl = _imageUrl
+
+
 	# c is euc-kr string !
-	def get_charactor_info_from_string(self, c):
+	@classmethod
+	def get_charactor_info_from_string(cls, c):
 		# All String Save the UTF-8
-		uni_c = unicode(c,'euc-kr').encode('utf-8')
-		#print get_charactor_num(uni_c), get_charactor_name(uni_c), get_charactor_icon_url(uni_c), get_charactor_cost(uni_c), get_charactor_exp(uni_c)
-		get_charactor_status(uni_c)
+		#uni_c = unicode(c,'euc-kr').encode('utf-8')
+		uni_c = c
+		#print get_charactor_num(uni_c), get_charactor_icon_url(uni_c), get_charactor_cost(uni_c), get_charactor_exp(uni_c), get_charactor_status(uni_c), get_charactor_attr(uni_c), get_charactor_type(uni_c)
+		#추후 작업을 계속 하여야 한다.  이부분에 아직 데이터가 정제가 되지 않았음 
+		return cls(_no = get_charactor_num(uni_c), _name= get_charactor_name(uni_c), _cost= get_charactor_cost(uni_c), _exp = get_charactor_exp(uni_c))
 
-
-	def get_charactor_info_from_file(self, _path):
+	@classmethod
+	def get_charactor_info_from_file(cls, _path):
 		# All String Save the UTF-8
 		f = open(_path)
 		c = f.read()
 		f.close()
-		return self.get_charactor_info_from_string(c);
+		return cls.get_charactor_info_from_string(c);
 
-
-	def get_charactor_info_from_url(self, id_num):
+	@classmethod
+	def get_charactor_info_from_url(cls, id_num):
 		# get Monster Data from inven
 		url  = "http://m.inven.co.kr/site/pad/monster.php?code=%d"%id_num
 		u = urllib.urlopen(url);
 		c = u.read()
 		u.close()
-		return self.get_charactor_info_from_string(c);
+		return cls.get_charactor_info_from_string(c);
+
+	def showData(self):
+		print "id:",self._no
+		print "name: ",self._name
+		print "cost: ", self._cost
+		print "exp: ", self._exp
+		print "attribute: ",self._mainAttribute, self._subAttribute
+		print "type: ", self._mainType, self._subType
 
