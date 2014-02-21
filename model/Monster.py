@@ -99,9 +99,18 @@ class Monster(object):
 	_cost = 0
 	_exp = 0
 	_maxLevel = 0
-	_attackPointList = []
-	_healPointList = []
-	_healthPointList = []
+	_minAttackPoint = 0;
+	_maxAttackPoint = 0;
+	_attackPointType = 0;
+
+	_minHealthPoint = 0;
+	_maxHealthPoint = 0;
+	_healthPointType = 0;
+
+	_minHealPoint = 0;
+	_maxHealPoint = 0;
+	_healPointType = 0;
+
 	_mainAttribute = 0
 	_subAttribute = 0
 	_mainType = 0
@@ -113,7 +122,7 @@ class Monster(object):
 	_nextEvolution = 0
 	_imageUrl = ""
 
-	def __init__(self, _no=0,_name="None",_cost=0,_exp=0,_maxLevel = 0, _attackPointList = [], _healPointList = [],_healthPointList = [],_mainAttribute = 0,_subAttribute = 0,_mainType = 0,_subType = 0, _skill = 0,_LeaderSKill = 0,_AwakeSkill = 0,_prevEvolution = 0,	_nextEvolution = 0,	_imageUrl = ""):
+	def __init__(self, _no=0,_name="None",_cost=0,_exp=0,_maxLevel = 0, _minAttackPoint = 0, _maxAttackPoint = 0, _attackPointType = 0,	_minHealthPoint = 0, _maxHealthPoint = 0, _healthPointType = 0,	_minHealPoint = 0, _maxHealPoint = 0, _healPointType = 0,_mainAttribute = 0,_subAttribute = 0,_mainType = 0,_subType = 0, _skill = 0,_LeaderSKill = 0,_AwakeSkill = 0, _prevEvolution = 0,	_nextEvolution = 0,	_imageUrl = ""):
 		self._no = _no;
 		self._name = _name
 		self._cost = _cost

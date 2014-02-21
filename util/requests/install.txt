@@ -1,0 +1,1 @@
+인스톨 하는 방법 python setup.py install
