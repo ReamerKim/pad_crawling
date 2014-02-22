@@ -6,3 +6,5 @@ http://www.thisisgame.com/pad/info/skill/list.php?class1=2 <- Skill
 
 def getStat(level, minHp, maxHp, mod):
 	return round(minHp  + (maxHp - minHp)*pow((level - 1) / (99 - 1) , mod))
+
+skillList=re.compile(r"<tbody>([^@]+)</tbody>")

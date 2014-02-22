@@ -15,7 +15,7 @@ def getMonsterData(mon_num):
         rst = json.loads(t)
         return rst
 
-print getMonsterData(30000)
+print getMonsterData(3)
 
 
 

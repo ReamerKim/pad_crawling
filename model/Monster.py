@@ -3,6 +3,8 @@
 
 import urllib
 import re
+import requests
+import json
 
 _no = re.compile(r"""<div class="no">No. ([^<]+)</div>""");
 _name = re.compile(r"""<div class="name">([^<]+)</div>""")
@@ -14,6 +16,35 @@ _attr= re.compile(r"""fonticon_attr_([\d]+)""");
 _type=re.compile(r"""fonticon/fonticon_type_([\d]+)""");
 _skill = re.compile(r"""<div class="block skillInfo">([^@]+)<div class="block awakenInfo">""");
 _awakeSkill = re.compile(r"""<div class="block awakenInfo">([^@]{3,5000}?)</div>""");
+
+
+''' 
+Get monster data from inven json structure
+monstercode: int
+maxattack: int
+monsterattribute: int
+recoverymod: str
+monstername: unicode
+exptype: int
+needexp: int
+hpmod: str
+attack: int
+exp: int
+maxhp: int
+maxrecovery: int
+attackmod: str
+maxlevel: int
+hp: int
+recovery: int
+'''
+def get_monster_default_data(monster_num):
+	data = { 'code': '%d'%monster_num, 'mode': '2' }
+	url = r"""http://m.inven.co.kr/site/pad/monster_info.ajax.php"""
+	r = requests.post(url,data=data)
+	t = r.text
+	rst = json.loads(t)
+	return rst;
+
 
 def get_charactor_num(uni_c):
 	com = re.compile(_no);
@@ -93,11 +124,15 @@ def get_charactor_type(uni_c):
 	else:
 		raise Exception("ERROR")
 
+	
+
 class Monster(object):
 	_no = 0
 	_name = "None"
 	_cost = 0
 	_exp = 0
+	_expType = 0
+
 	_maxLevel = 0
 	_minAttackPoint = 0;
 	_maxAttackPoint = 0;
@@ -122,25 +157,33 @@ class Monster(object):
 	_nextEvolution = 0
 	_imageUrl = ""
 
-	def __init__(self, _no=0,_name="None",_cost=0,_exp=0,_maxLevel = 0, _minAttackPoint = 0, _maxAttackPoint = 0, _attackPointType = 0,	_minHealthPoint = 0, _maxHealthPoint = 0, _healthPointType = 0,	_minHealPoint = 0, _maxHealPoint = 0, _healPointType = 0,_mainAttribute = 0,_subAttribute = 0,_mainType = 0,_subType = 0, _skill = 0,_LeaderSKill = 0,_AwakeSkill = 0, _prevEvolution = 0,	_nextEvolution = 0,	_imageUrl = ""):
+	def __init__(self, _no= 0, _name= "None", _cost= 0, _exp= 0, _expType=0, _maxLevel= 0, _minAttackPoint= 0, _maxAttackPoint= 0, _attackPointType= 0, _minHealthPoint= 0, _maxHealthPoint= 0, _healthPointType= 0, _minHealPoint= 0, _maxHealPoint= 0, _healPointType= 0, _mainAttribute= 0, _subAttribute= 0, _mainType= 0, _subType= 0, _skill= 0, _LeaderSKill= 0, _AwakeSkill= 0, _prevEvolution= 0, _nextEvolution= 0, _imageUrl= ""):
 		self._no = _no;
-		self._name = _name
-		self._cost = _cost
-		self._exp = _exp
-		self._maxLevel = _maxLevel
-		self._attackPointList = _attackPointList
-		self._healPointList = _healPointList
-		self._healthPointList = _healthPointList
-		self._mainAttribute = _mainAttribute
-		self._subAttribute = _subAttribute
-		self._mainType = _mainType
-		self._subType = _subType
-		self._skill = _skill
-		self._LeaderSKill = _LeaderSKill
-		self._AwakeSkill = _AwakeSkill
-		self._prevEvolution = _prevEvolution
-		self._nextEvolution = _nextEvolution
-		self._imageUrl = _imageUrl
+		self._name = _name;
+		self._cost = _cost;	
+		self._exp = _exp;
+		self._expType = _expType;
+		self._maxLevel = _maxLevel;
+		self._minAttackPoint = _minAttackPoint;
+		self._maxAttackPoint = _maxAttackPoint;
+		self._attackPointType = _attackPointType;
+		self._minHealthPoint = _minHealthPoint;
+		self._maxHealthPoint = _maxHealthPoint;
+		self._healthPointType = _healthPointType;
+		self._minHealPoint = _minHealPoint;
+		self._maxHealPoint = _maxHealPoint;
+		self._healPointType = _healPointType;
+		self._mainAttribute = _mainAttribute; 
+		self._subAttribute = _subAttribute; 
+		self._mainType = _mainType;	
+		self._subType = _subType;	
+		self._skill = _skill;			#
+		self._LeaderSKill = _LeaderSKill;	#
+		self._AwakeSkill = _AwakeSkill;		#
+		self._prevEvolution = _prevEvolution;	#
+		self._nextEvolution = _nextEvolution;	#
+		self._imageUrl = _imageUrl;
+
 
 
 	# c is euc-kr string !
@@ -169,6 +212,44 @@ class Monster(object):
 		c = u.read()
 		u.close()
 		return cls.get_charactor_info_from_string(c);
+
+	@classmethod
+	def get_charactor_info_from_json(cls, id_num):
+		try:
+			print 'get %d'%id_num
+			rst = get_monster_default_data(id_num)
+			m = cls(_no=rst['monstercode'], _name=rst['monstername'].encode('utf-8'), _maxLevel=rst['maxlevel'], _minAttackPoint=rst['attack'], _maxAttackPoint=rst['maxattack'], _attackPointType = float(rst['attackmod']) , _minHealthPoint= rst['hp'], _maxHealthPoint= rst['maxhp'] , _healthPointType=float(rst['hpmod']), _minHealPoint=rst['recovery'], _maxHealPoint=rst['maxrecovery'], _healPointType=float(rst['recoverymod']), _exp = rst['exp'], _expType = rst['exptype'])
+			'''
+			추후 추가해야 할 부분들 
+			self._skill = _skill;			#
+			self._LeaderSKill = _LeaderSKill;	#
+			self._AwakeSkill = _AwakeSkill;		#
+			self._prevEvolution = _prevEvolution;	#
+			self._nextEvolution = _nextEvolution;	#
+			'''
+			url  = "http://m.inven.co.kr/site/pad/monster.php?code=%d"%id_num
+			u = urllib.urlopen(url);
+			c = u.read()
+			u.close()
+			m._cost = get_charactor_cost(c);
+			attr = get_charactor_attr(c);
+			if len(attr) == 1:
+				m._mainAttribute = attr[0]
+			elif len(attr) == 2:
+				m._mainAttribute = attr[0]
+				m._subAttribute = attr[1]
+			types = get_charactor_type(c);
+			if len(types) == 1:
+				m._mainType = types[0]
+			elif len(types) == 2:
+				m._mainType = types[0]
+				m._subType = types[1]
+			m._imageUrl = get_charactor_icon_url(c);
+			
+			return m
+		except Exception as e:
+			print "Not find (%d) monster"%id_num
+			print 'Error - ', e
 
 	def showData(self):
 		print "id:",self._no
