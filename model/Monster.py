@@ -127,36 +127,6 @@ def get_charactor_type(uni_c):
 	
 
 class Monster(object):
-	_no = 0
-	_name = "None"
-	_cost = 0
-	_exp = 0
-	_expType = 0
-
-	_maxLevel = 0
-	_minAttackPoint = 0;
-	_maxAttackPoint = 0;
-	_attackPointType = 0;
-
-	_minHealthPoint = 0;
-	_maxHealthPoint = 0;
-	_healthPointType = 0;
-
-	_minHealPoint = 0;
-	_maxHealPoint = 0;
-	_healPointType = 0;
-
-	_mainAttribute = 0
-	_subAttribute = 0
-	_mainType = 0
-	_subType = 0
-	_skill = 0
-	_LeaderSKill = 0
-	_AwakeSkill = ""
-	_prevEvolution = 0
-	_nextEvolution = 0
-	_imageUrl = ""
-
 	def __init__(self, _no= 0, _name= "None", _cost= 0, _exp= 0, _expType=0, _maxLevel= 0, _minAttackPoint= 0, _maxAttackPoint= 0, _attackPointType= 0, _minHealthPoint= 0, _maxHealthPoint= 0, _healthPointType= 0, _minHealPoint= 0, _maxHealPoint= 0, _healPointType= 0, _mainAttribute= 0, _subAttribute= 0, _mainType= 0, _subType= 0, _skill= 0, _LeaderSKill= 0, _AwakeSkill= "", _prevEvolution= 0, _nextEvolution= 0, _imageUrl= ""):
 		self._no = _no;
 		self._name = _name;
@@ -250,6 +220,7 @@ class Monster(object):
 		except Exception as e:
 			print "Not find (%d) monster"%id_num
 			print 'Error - ', e
+			return None;
 
 	def showData(self):
 		print "id:",self._no

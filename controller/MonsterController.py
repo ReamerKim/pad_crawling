@@ -6,15 +6,24 @@ import sys
 import os
 import _mysql
 
-def moster_insert_data(db=_mysql.connect(host="localhost",user="root", passwd="admin", db="pad"), mon):
+#def moster_insert_data(db=_mysql.connect(host="localhost",user="root", passwd="admin", db="pad"), mon):
+		
+
+def moster_insert_data(db, mon):
+
+	mon.showData()
 	#db=_mysql.connect(host="localhost",user="root", passwd="admin", db="pad")
 	#query = r"""INSERT INTO `pad`.`monstor` (`no`, `name`, `cost`, `exp`, `maxLevel`, `expType`, `maxLevel`, `minAttackPoint`, `maxAttackPoint`, `attackPointType`, `minHealthPoint`, `maxHealthPoint`, `healthPointType`, `minHealPoint`, `maxHealPoint`, `healPointType`, `mainAttribute`, `subAttribute`,	`mainType`,	`subType`, 'imageUrl') VALUES ('%d ', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%f', '%d', '%d', '%f', '%d', '%d', '%f', `%d`, `%d`,`%d`, `%d`, `%s`); """%(mon._no, mon._name, mon._exp, mon._expType, mon._maxLevel, mon._expType, mon._maxLevel, mon._minAttackPoint, mon._maxAttackPoint, mon._attackPointType, mon._minHealthPoint, mon._maxHealthPoint, mon._healthPointType, mon._minHealPoint, mon._maxHealPoint, mon._healPointType,	mon._mainAttribute,	mon._subAttribute, mon._mainType, mon._subType, mon._imageUrl)
-	query = r"""INSERT INTO `pad`.`monstor` ('no','name','cost','exp','expType','maxLevel','minAttackPoint','maxAttackPoint','attackPointType','minHealthPoint','maxHealthPoint','healthPointType','minHealPoint','maxHealPoint','healPointType','mainAttribute','subAttribute','mainType','subType','skill','leaderSkill','awakeSkillList','prevEvolution','nextEvolution','imageUrl') VALUES ('%d','%s','%d','%d','%d','%d','%d','%d','%f','%d','%d','%f','%d','%d','%f','%d','%d','%d','%d','%d','%d','%s','%d','%d','%s');"""
-	print query
+	query = r"""INSERT INTO `monstor` ('no','name','cost','exp','expType','maxLevel','minAttackPoint','maxAttackPoint','attackPointType','minHealthPoint','maxHealthPoint','healthPointType','minHealPoint','maxHealPoint','healPointType','mainAttribute','subAttribute','mainType','subType','skill','leaderSkill','awakeSkillList','prevEvolution','nextEvolution','imageUrl') VALUES ('%d','%s','%d','%d','%d','%d','%d','%d','%f','%d','%d','%f','%d','%d','%f','%d','%d','%d','%d','%d','%d','%s','%d','%d','%s');"""
+	make_query = query%(mon._no, mon._name, mon._cost,mon._exp, mon._expType, mon._maxLevel, mon._minAttackPoint, mon._maxAttackPoint, mon._attackPointType, mon._minHealthPoint,mon._maxHealthPoint, mon._healthPointType, mon._minHealPoint , mon._maxHealPoint , mon._healPointType ,mon._mainAttribute, mon._subAttribute , mon._mainType , mon._subType , mon._skill, mon._LeaderSKill, mon._AwakeSkill, mon._prevEvolution, mon._nextEvolution, mon._imageUrl)
+	print make_query
+	db.query(make_query)
 
-	#db.query(query)
+def monster_delete_data(db, mon_no):
+	query = """DELETE FROM `monster` WHERE  `no`=%d"""%mon_no
+	db.query(query)
 
-def moster_create_table(db=_mysql.connect(host="localhost",user="root", passwd="admin", db="pad")):
+def moster_create_table(db):
 	query = '''CREATE TABLE `monster` (
 	`no` INT(10) UNSIGNED NOT NULL,
 	`name` CHAR(30) NOT NULL COLLATE 'utf8_bin',
@@ -54,3 +63,14 @@ ENGINE=InnoDB;'''
 	db.query(query)
 
 #moster_create_table();
+
+
+if __name__ == "__main__":
+	db=_mysql.connect(host="localhost",user="root", passwd="admin", db="pad")
+	#create Table
+	#moster_create_table(db);
+
+	# Delete data
+	#monster_delete_data(db,1);
+	
+
