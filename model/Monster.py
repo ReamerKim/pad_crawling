@@ -107,7 +107,7 @@ def get_charactor_attr(uni_c):
 	rst = com.findall(uni_c)
 	if len(rst) != 0:
 		rr = []
-		for r in rst[0]:
+		for r in rst:
 			rr.append(int(r))
 		return rr
 	else:
@@ -118,7 +118,7 @@ def get_charactor_type(uni_c):
 	rst = com.findall(uni_c)
 	if len(rst) != 0:
 		rr = []
-		for r in rst[0]:
+		for r in rst:
 			rr.append(int(r))
 		return rr
 	else:
@@ -127,7 +127,7 @@ def get_charactor_type(uni_c):
 	
 
 class Monster(object):
-	def __init__(self, _no= 0, _name= "None", _cost= 0, _exp= 0, _expType=0, _maxLevel= 0, _minAttackPoint= 0, _maxAttackPoint= 0, _attackPointType= 0, _minHealthPoint= 0, _maxHealthPoint= 0, _healthPointType= 0, _minHealPoint= 0, _maxHealPoint= 0, _healPointType= 0, _mainAttribute= 0, _subAttribute= 0, _mainType= 0, _subType= 0, _skill= 0, _LeaderSKill= 0, _AwakeSkill= "", _prevEvolution= 0, _nextEvolution= 0, _imageUrl= ""):
+	def __init__(self, _no= 0, _name= "None", _cost= 0, _exp= 0, _expType=0, _maxLevel= 0, _minAttackPoint= 0, _maxAttackPoint= 0, _attackPointType= 0, _minHealthPoint= 0, _maxHealthPoint= 0, _healthPointType= 0, _minHealPoint= 0, _maxHealPoint= 0, _healPointType= 0, _mainAttribute= 0, _subAttribute= 0, _mainType= 0, _subType= 0, _skill= 0, _LeaderSKill= 0, _AwakeSkill= "None", _prevEvolution= 0, _nextEvolution= 0, _imageUrl= "None"):
 		self._no = _no;
 		self._name = _name;
 		self._cost = _cost;	
@@ -186,7 +186,7 @@ class Monster(object):
 	@classmethod
 	def get_charactor_info_from_json(cls, id_num):
 		try:
-			print 'get %d'%id_num
+			#print 'get %d'%id_num
 			rst = get_monster_default_data(id_num)
 			m = cls(_no=rst['monstercode'], _name=rst['monstername'].encode('utf-8'), _maxLevel=rst['maxlevel'], _minAttackPoint=rst['attack'], _maxAttackPoint=rst['maxattack'], _attackPointType = float(rst['attackmod']) , _minHealthPoint= rst['hp'], _maxHealthPoint= rst['maxhp'] , _healthPointType=float(rst['hpmod']), _minHealPoint=rst['recovery'], _maxHealPoint=rst['maxrecovery'], _healPointType=float(rst['recoverymod']), _exp = rst['exp'], _expType = rst['exptype'])
 			'''
@@ -229,4 +229,17 @@ class Monster(object):
 		print "exp: ", self._exp
 		print "attribute: ",self._mainAttribute, self._subAttribute
 		print "type: ", self._mainType, self._subType
+
+	# 해당 lv에 몬스터의 hp, attack, recovery 를 구한다.
+	def get_monster_status(self,lv,HPplusEgg=0,AttackPlusEgg=0,RecoveryPlusEgg=0):
+		if lv > self._maxLevel:
+			lv = self._maxLevel
+		calc = lambda minVal,maxVal,level,maxLevel,mod:int(round(float(minVal)  + (float(maxVal) - float(minVal))*pow((float(level) - 1) / (float(maxLevel) - 1) , float(mod))))
+		hp = calc(self._minHealthPoint, self._maxHealthPoint, lv, self._maxLevel, self._healthPointType) + HPplusEgg*10
+		attack = calc(self._minAttackPoint, self._maxAttackPoint, lv, self._maxLevel, self._attackPointType) + AttackPlusEgg*5
+		recovery = calc(self._minHealPoint, self._maxHealPoint, lv, self._maxLevel, self._healPointType) + RecoveryPlusEgg*3
+		return hp, attack, recovery
+
+
+
 

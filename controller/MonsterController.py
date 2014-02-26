@@ -14,7 +14,7 @@ def moster_insert_data(db, mon):
 	mon.showData()
 	#db=_mysql.connect(host="localhost",user="root", passwd="admin", db="pad")
 	#query = r"""INSERT INTO `pad`.`monstor` (`no`, `name`, `cost`, `exp`, `maxLevel`, `expType`, `maxLevel`, `minAttackPoint`, `maxAttackPoint`, `attackPointType`, `minHealthPoint`, `maxHealthPoint`, `healthPointType`, `minHealPoint`, `maxHealPoint`, `healPointType`, `mainAttribute`, `subAttribute`,	`mainType`,	`subType`, 'imageUrl') VALUES ('%d ', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%f', '%d', '%d', '%f', '%d', '%d', '%f', `%d`, `%d`,`%d`, `%d`, `%s`); """%(mon._no, mon._name, mon._exp, mon._expType, mon._maxLevel, mon._expType, mon._maxLevel, mon._minAttackPoint, mon._maxAttackPoint, mon._attackPointType, mon._minHealthPoint, mon._maxHealthPoint, mon._healthPointType, mon._minHealPoint, mon._maxHealPoint, mon._healPointType,	mon._mainAttribute,	mon._subAttribute, mon._mainType, mon._subType, mon._imageUrl)
-	query = r"""INSERT INTO `monstor` ('no','name','cost','exp','expType','maxLevel','minAttackPoint','maxAttackPoint','attackPointType','minHealthPoint','maxHealthPoint','healthPointType','minHealPoint','maxHealPoint','healPointType','mainAttribute','subAttribute','mainType','subType','skill','leaderSkill','awakeSkillList','prevEvolution','nextEvolution','imageUrl') VALUES ('%d','%s','%d','%d','%d','%d','%d','%d','%f','%d','%d','%f','%d','%d','%f','%d','%d','%d','%d','%d','%d','%s','%d','%d','%s');"""
+	query = r"""INSERT INTO `monster` (`no`,`name`,`cost`,`exp`,`expType`,`maxLevel`,`minAttackPoint`,`maxAttackPoint`,`attackPointType`,`minHealthPoint`,`maxHealthPoint`,`healthPointType`,`minHealPoint`,`maxHealPoint`,`healPointType`,`mainAttribute`,`subAttribute`,`mainType`,`subType`,`skill`,`leaderSkill`,`awakeSkillList`,`prevEvolution`,`nextEvolution`,`imageUrl`) VALUES (%d,'%s',%d,%d,%d,%d,%d,%d,%f,%d,%d,%f,%d,%d,%f,%d,%d,%d,%d,%d,%d,'%s',%d,%d,'%s');"""
 	make_query = query%(mon._no, mon._name, mon._cost,mon._exp, mon._expType, mon._maxLevel, mon._minAttackPoint, mon._maxAttackPoint, mon._attackPointType, mon._minHealthPoint,mon._maxHealthPoint, mon._healthPointType, mon._minHealPoint , mon._maxHealPoint , mon._healPointType ,mon._mainAttribute, mon._subAttribute , mon._mainType , mon._subType , mon._skill, mon._LeaderSKill, mon._AwakeSkill, mon._prevEvolution, mon._nextEvolution, mon._imageUrl)
 	print make_query
 	db.query(make_query)
@@ -59,7 +59,7 @@ def moster_create_table(db):
 COMMENT='no'
 COLLATE='utf8_bin'
 ENGINE=InnoDB;'''
-	db=_mysql.connect(host="localhost",user="root", passwd="admin", db="pad")
+	#db=_mysql.connect(host="localhost",user="root", passwd="admin", db="pad")
 	db.query(query)
 
 #moster_create_table();
